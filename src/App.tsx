@@ -32,6 +32,7 @@ interface Session {
   username: string
   displayName: string
   role: UserRole
+  sessionId: string
 }
 
 interface WakeLockSentinelLike {
@@ -168,16 +169,16 @@ const useKeepScreenAwake = () => {
 
 const accounts: UserAccount[] = [
   {
-    username: 'instruktor',
-    password: 'sim123',
+    username: 'Madic',
+    password: 'Bertil83',
     role: 'instructor',
-    displayName: 'Instruktör',
+    displayName: 'Madic',
   },
   {
-    username: 'deltagare',
-    password: 'sim123',
-    role: 'participant',
-    displayName: 'Deltagare',
+    username: 'AlexDVO',
+    password: 'AlexDVO',
+    role: 'instructor',
+    displayName: 'AlexDVO',
   },
 ]
 
@@ -6325,14 +6326,14 @@ const HamiltonT1Screen = ({ state, onVentilatorChange }: { state: SimulationStat
 
 
 const LoginScreen = ({ onLogin }: { onLogin: (session: Session) => void }) => {
-  const [username, setUsername] = useState('instruktor')
-  const [password, setPassword] = useState('sim123')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
     const account = accounts.find(
-      (entry) => entry.username === username.trim().toLowerCase() && entry.password === password,
+      (entry) => entry.username.toLowerCase() === username.trim().toLowerCase() && entry.password === password,
     )
 
     if (!account) {
@@ -6340,10 +6341,14 @@ const LoginScreen = ({ onLogin }: { onLogin: (session: Session) => void }) => {
       return
     }
 
+    // Instructors with same username share the same session across devices
+    const sessionId = `session:${account.username}`
+
     onLogin({
       username: account.username,
       role: account.role,
       displayName: account.displayName,
+      sessionId,
     })
   }
 
@@ -6352,7 +6357,6 @@ const LoginScreen = ({ onLogin }: { onLogin: (session: Session) => void }) => {
       <section className="login-card">
         <p className="tag">Medical Simulation Studio</p>
         <h1>Logga in</h1>
-        <p className="hint">Demo-konton: instruktor/sim123 och deltagare/sim123</p>
 
         <form onSubmit={handleSubmit}>
           <label>
