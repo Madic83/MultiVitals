@@ -1,0 +1,488 @@
+/* ═══════════════════════════════════════════════════════════
+   Hamilton T1 Transport Ventilator Screen
+   Based on Hamilton Medical HAMILTON-T1 Operator's Manual
+   ═══════════════════════════════════════════════════════════ */
+
+.hamt1-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: linear-gradient(145deg, #5e6b73 0%, #4f5c64 46%, #435159 100%);
+}
+
+.hamt1-device {
+  width: min(1200px, 100%);
+  background: linear-gradient(175deg, #7b8790 0%, #65737c 36%, #5b6871 100%);
+  border-radius: 20px;
+  border: 2px solid #46525a;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 24px 36px rgba(9,14,18,0.35);
+  padding: 0.95rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 176px;
+  gap: 0.95rem;
+  min-height: min(700px, 90vh);
+}
+
+/* ── Monitor ── */
+.hamt1-monitor {
+  background: #04070c;
+  border: 2px solid #1f2a31;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: visible;
+  position: relative;
+}
+
+/* ── Top bar ── */
+.hamt1-topbar {
+  min-height: 2.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.2rem 0.46rem;
+  border-bottom: 1px solid #1f2e39;
+  background: #06101a;
+  flex-shrink: 0;
+}
+
+.hamt1-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.hamt1-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #0e2030;
+  border: 1px solid #2a4555;
+  border-radius: 4px;
+  padding: 0.22rem 0.5rem;
+  cursor: pointer;
+  color: #f2f8ff;
+}
+
+.hamt1-mode-btn:hover {
+  background: #162e42;
+}
+
+.hamt1-mode-label {
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: #d4eeff;
+  letter-spacing: 0.03em;
+}
+
+.hamt1-mode-full {
+  font-size: 0.72rem;
+  color: #8ab5cc;
+  white-space: nowrap;
+}
+
+.hamt1-mode-arrow {
+  font-size: 0.65rem;
+  color: #6a9baf;
+  margin-left: 0.1rem;
+}
+
+.hamt1-patient-group {
+  font-size: 0.75rem;
+  color: #8aa7b8;
+  border: 1px solid #2a4555;
+  border-radius: 3px;
+  padding: 0.12rem 0.4rem;
+  background: #0b1e2d;
+  white-space: nowrap;
+}
+
+.hamt1-alarm {
+  flex: 1;
+  text-align: center;
+  border-radius: 3px;
+  padding: 0.18rem 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.hamt1-alarm--none { background: transparent; color: transparent; }
+.hamt1-alarm--med  { background: #c8a028; color: #1a1200; border: 1px solid #9a7a18; }
+.hamt1-alarm--high { background: #c02828; color: #fff; border: 1px solid #8a1818; animation: hamt1-blink 0.8s step-end infinite; }
+
+@keyframes hamt1-blink { 50% { opacity: 0.4; } }
+
+.hamt1-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.hamt1-audio-off { font-size: 1rem; }
+.hamt1-clock { color: #8aa7b8; font-size: 0.82rem; font-family: var(--font-display); }
+
+/* ── Mode dropdown ── */
+.hamt1-mode-menu {
+  position: absolute;
+  top: 2.5rem;
+  left: 0.46rem;
+  z-index: 100;
+  background: #0b1824;
+  border: 1px solid #2a4555;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  min-width: 260px;
+  overflow: hidden;
+}
+
+.hamt1-mode-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  padding: 0.5rem 0.8rem;
+  border: none;
+  background: transparent;
+  color: #d4e8f3;
+  cursor: pointer;
+  border-bottom: 1px solid #162636;
+  text-align: left;
+}
+
+.hamt1-mode-item strong { font-size: 1rem; font-family: var(--font-display); color: #d4eeff; }
+.hamt1-mode-item span   { font-size: 0.72rem; color: #7aadbe; }
+.hamt1-mode-item:hover  { background: #142030; }
+.hamt1-mode-item--active { background: #0e2e44; }
+.hamt1-mode-item--active strong { color: #6ee8ff; }
+.hamt1-mode-item:last-child { border-bottom: none; }
+
+/* ── Main area ── */
+.hamt1-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) 128px;
+  gap: 0.4rem;
+  padding: 0.3rem;
+  overflow: hidden;
+}
+
+/* ── Left MMP values (6 rows from manual ch.8) ── */
+.hamt1-left-values {
+  display: grid;
+  grid-template-rows: repeat(6, minmax(0, 1fr));
+  gap: 0.15rem;
+}
+
+.hamt1-value-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  padding: 0.12rem 0.18rem;
+  border-left: 2px solid #2d3f4a;
+}
+
+.hamt1-value-block strong {
+  font-family: var(--font-display);
+  color: #f2f8ff;
+  font-size: 2.3rem;
+  line-height: 0.88;
+}
+
+.hamt1-value-block span,
+.hamt1-value-block small {
+  color: #b8ccd8;
+  font-size: 0.67rem;
+  line-height: 1.1;
+}
+
+.hamt1-value-block--yellow strong,
+.hamt1-value-block--yellow span,
+.hamt1-value-block--yellow small { color: #e0c844; }
+
+.hamt1-value-block--red strong,
+.hamt1-value-block--red span,
+.hamt1-value-block--red small    { color: #e85353; }
+
+.hamt1-value-block--dim strong   { color: #7aadbe; }
+.hamt1-value-block--dim span,
+.hamt1-value-block--dim small    { color: #5a8b9c; }
+
+/* ── Waveforms ── */
+.hamt1-wave-stack {
+  display: grid;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 0.2rem;
+}
+
+.hamt1-wave-row {
+  border: 1px solid #17242d;
+  border-radius: 3px;
+  background: #03070c;
+  padding: 0.1rem 0.2rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.hamt1-wave-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  color: #7a9cb0;
+  font-size: 0.6rem;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.hamt1-wave-head span { text-transform: uppercase; letter-spacing: 0.04em; }
+
+.hamt1-wave-wrap { flex: 1; min-height: 0; }
+.hamt1-wave-wrap .wave {
+  margin: 0; border: none; border-radius: 0;
+  background: transparent; min-height: 0; height: 100%;
+}
+.hamt1-wave-wrap .wave.compact svg { height: 100%; }
+.hamt1-wave-wrap .wave circle { display: none; }
+
+.hamt1-wave-row--paw  .wave polyline { stroke: #f1d553; }
+.hamt1-wave-row--flow .wave polyline { stroke: #ef76a9; }
+.hamt1-wave-row--vol  .wave polyline { stroke: #8de35e; }
+
+/* ── Right set parameters ── */
+.hamt1-right-values {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  padding-left: 0.12rem;
+  border-left: 1px solid #1a2e3a;
+}
+
+.hamt1-set-header {
+  color: #7aadbe;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-bottom: 0.1rem;
+  border-bottom: 1px solid #1a3040;
+}
+
+.hamt1-set-param {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 0.2rem;
+  padding: 0.12rem 0.2rem;
+  background: #080f18;
+  border: 1px solid #162636;
+  border-radius: 3px;
+}
+
+.hamt1-set-label {
+  font-size: 0.66rem;
+  color: #8aa7b8;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hamt1-set-value {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: #d4eeff;
+  text-align: right;
+  line-height: 1;
+}
+
+.hamt1-set-unit {
+  font-size: 0.58rem;
+  color: #6a9baf;
+  align-self: end;
+  padding-bottom: 0.1rem;
+  white-space: nowrap;
+}
+
+.hamt1-meas-o2,
+.hamt1-peep-meas {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  gap: 0.2rem;
+  padding: 0.1rem 0.2rem;
+  background: #06121c;
+  border: 1px solid #1a3040;
+  border-radius: 3px;
+  margin-top: auto;
+}
+
+.hamt1-meas-o2 span:first-child,
+.hamt1-peep-meas span:first-child { font-size: 0.6rem; color: #6a9baf; }
+.hamt1-meas-o2 strong,
+.hamt1-peep-meas strong { font-family: var(--font-display); font-size: 1.1rem; color: #cce8f5; }
+.hamt1-meas-o2 span:last-child,
+.hamt1-peep-meas span:last-child { font-size: 0.58rem; color: #6a9baf; }
+
+/* ── Bottom softkey bar ── */
+.hamt1-bottom-bar {
+  border-top: 1px solid #15212a;
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: #06101a;
+}
+
+.hamt1-softkey {
+  border: none;
+  border-right: 1px solid #15212a;
+  background: transparent;
+  color: #d4e0e7;
+  font-size: 0.95rem;
+  font-family: var(--font-display);
+  padding: 0.38rem 0.3rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  letter-spacing: 0.02em;
+}
+
+.hamt1-softkey:last-child { border-right: none; }
+.hamt1-softkey:hover     { background: #0d2030; }
+.hamt1-softkey--active   { background: #0e2d44; color: #6ee8ff; border-bottom: 2px solid #4eb8e0; }
+
+/* ── Side controls panel ── */
+.hamt1-controls {
+  border-radius: 12px;
+  border: 1px solid #536068;
+  background: linear-gradient(180deg, #8a97a1 0%, #79868f 52%, #727f89 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.62rem 0.5rem;
+}
+
+.hamt1-power-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid #c4cf8e;
+  background: radial-gradient(circle at 35% 35%, #eff6ca 0%, #b2bc7f 100%);
+  color: #4a5a36;
+  font-size: 1.7rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.hamt1-ctrl-section {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.3rem;
+  width: 100%;
+}
+
+.hamt1-ctrl-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.32rem 0.2rem;
+  border-radius: 4px;
+  border: 1px solid #8d9aa3;
+  background: linear-gradient(180deg, #aab6be, #909ea8);
+  color: #2d3941;
+  cursor: pointer;
+  min-height: 46px;
+}
+
+.hamt1-ctrl-btn:hover { background: linear-gradient(180deg, #bbc8d1, #a0adb8); }
+
+.hamt1-ctrl-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.hamt1-ctrl-lbl {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #3a4850;
+  text-align: center;
+  line-height: 1;
+}
+
+.hamt1-knob {
+  margin-top: auto;
+  width: 88px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid #4f5d67;
+  background: repeating-conic-gradient(from 0deg, #7f8b94 0deg 10deg, #6c7882 10deg 20deg);
+  box-shadow: inset 0 0 0 12px #5c6872, inset 0 0 0 20px #839099;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.hamt1-knob::after {
+  content: '';
+  position: absolute;
+  inset: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #9ce39f 0%, #4ca259 68%, #3b8247 100%);
+}
+
+/* ── Responsive ── */
+@media (max-width: 980px) {
+  .hamt1-device {
+    aspect-ratio: auto;
+    grid-template-columns: 1fr;
+    min-height: unset;
+  }
+
+  .hamt1-controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0.5rem;
+  }
+
+  .hamt1-ctrl-section {
+    grid-template-columns: repeat(6, 1fr);
+    flex: 1;
+  }
+
+  .hamt1-knob { width: 64px; margin-top: 0; }
+}
+
+@media (max-width: 640px) {
+  .hamt1-main {
+    grid-template-columns: 90px minmax(0, 1fr);
+  }
+
+  .hamt1-right-values {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .hamt1-set-header { display: none; }
+
+  .hamt1-set-param {
+    flex: 1;
+    min-width: 70px;
+  }
+
+  .hamt1-value-block strong { font-size: 1.8rem; }
+}
