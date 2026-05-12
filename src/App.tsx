@@ -180,6 +180,12 @@ const accounts: UserAccount[] = [
     role: 'instructor',
     displayName: 'AlexDVO',
   },
+  {
+    username: 'instruktor',
+    password: 'sim123',
+    role: 'instructor',
+    displayName: 'instruktor',
+  },
 ]
 
 const views: Array<{
